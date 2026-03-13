@@ -1,0 +1,76 @@
+name: dbt CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+
+  dbt-dev:
+    name: Run dbt in DEV
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dbt
+        run: pip install dbt-snowflake
+
+      - name: Install dbt dependencies
+        run: dbt deps
+
+      - name: Run dbt models in DEV
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_DATABASE_DEV: ${{ secrets.SNOWFLAKE_DATABASE_DEV }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+        run: |
+          dbt debug --target dev
+          dbt run --target dev
+          dbt test --target dev
+
+
+  dbt-prod:
+    name: Deploy dbt to PROD
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dbt
+        run: pip install dbt-snowflake
+
+      - name: Install dbt dependencies
+        run: dbt deps
+
+      - name: Run dbt models in PROD
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_DATABASE_PROD: ${{ secrets.SNOWFLAKE_DATABASE_PROD }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+        run: |
+          dbt debug --target prod
+          dbt run --target prod
+          dbt test --target prod
