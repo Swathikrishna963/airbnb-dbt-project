@@ -4,20 +4,20 @@ AIRBNB_PROJECT:
 
     dev:
       type: snowflake
-      account: "{{ env_var('SNOWFLAKE_ACCOUNT','HRB50418') }}"
-      user: github_actions_service_user
-      role: DBT_CICD_ROLE
-      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'COMPUTE_WH') }}"
-      database: "{{ env_var('SNOWFLAKE_DATABASE_DEV', 'AIRBNB') }}"
+      account: DYOSSGN-HRB50418
+      user: GITHUB_ACTIONS_SERVICE_USER
+      role: ACCOUNTADMIN
+      warehouse: COMPUTE_WH
+      database: AIRBNB
       schema: STAGING
       threads: 4
 
     prod:
       type: snowflake
-      account: "{{ env_var('SNOWFLAKE_ACCOUNT','HRB50418') }}"
-      user: github_actions_service_user
-      role: DBT_CICD_ROLE
-      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'COMPUTE_WH') }}"
-      database: "{{ env_var('SNOWFLAKE_DATABASE_PROD', 'AIRBNB_PROD') }}"
+      account: DYOSSGN-HRB50418
+      user: GITHUB_ACTIONS_SERVICE_USER
+      role: ACCOUNTADMIN
+      warehouse: COMPUTE_WH
+      database: AIRBNB_PROD
       schema: STAGING
       threads: 4
