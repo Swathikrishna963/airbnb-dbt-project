@@ -1,0 +1,23 @@
+AIRBNB_PROJECT:
+  target: dev
+  outputs:
+
+    dev:
+      type: snowflake
+      account: DYOSSGN-HRB50418
+      user: GITHUB_ACTIONS_SERVICE_USER
+      role: ACCOUNTADMIN
+      warehouse: COMPUTE_WH
+      database: AIRBNB
+      schema: STAGING
+      threads: 4
+
+    prod:
+      type: snowflake
+      account: DYOSSGN-HRB50418
+      user: GITHUB_ACTIONS_SERVICE_USER
+      role: ACCOUNTADMIN
+      warehouse: COMPUTE_WH
+      database: AIRBNB_PROD
+      schema: STAGING
+      threads: 4
