@@ -51,9 +51,7 @@ jobs:
       
 
       - name: Run dbt project
-        run: |
-           cd AIRBNB_PROJECT
-           dbt run --target dev
+        run: dbt run --target dev
 
 
       - name: test dbt project
