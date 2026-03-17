@@ -6,6 +6,7 @@ AIRBNB_PROJECT:
       type: snowflake
       account: DYOSSGN-HRB50418
       user: GITHUB_ACTIONS_SERVICE_USER
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
       role: ACCOUNTADMIN
       warehouse: COMPUTE_WH
       database: AIRBNB
@@ -16,6 +17,7 @@ AIRBNB_PROJECT:
       type: snowflake
       account: DYOSSGN-HRB50418
       user: GITHUB_ACTIONS_SERVICE_USER
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
       role: ACCOUNTADMIN
       warehouse: COMPUTE_WH
       database: AIRBNB_PROD
