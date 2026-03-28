@@ -1,0 +1,50 @@
+name: dbt CI/CD Pipeline
+
+# Trigger CI on feature branches, CD on main branch
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write  # Required for OIDC authentication to Snowflake
+
+jobs:
+
+  # CI Job: runs on feature branches / PRs
+  ci:
+    name: dbt CI - DEV
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/main'   # Only run CI on non-main branches
+    environment: prod # Must match the OIDC subject's environment
+    env:
+      SNOWFLAKE_CLI_FEATURES_ENABLE_DBT: true
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      # SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PAT }} # Snowflake password is required if you aren't using OIDC
+      SNOWFLAKE_DATABASE: ${{ vars.SNOWFLAKE_DATABASE }}
+      SNOWFLAKE_SCHEMA: ${{ vars.SNOWFLAKE_SCHEMA }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Snowflake CLI
+        uses: snowflakedb/snowflake-cli-action@v2.0
+        with: # Ensures Snowflake CLI will search for OIDC users matching this subject
+          use-oidc: true
+
+      - name: Check Snowflake CLI Version
+        run: snow --version
+
+      # The -x is shorthand for --temporary-connection
+      - run: snow connection test -x
+
+      - name: Run dbt deps
+        run: dbt deps
+
+      - name: Run dbt models in DEV
+        run: dbt run --target dev
+
+      - name: Run dbt tests in DEV
+        run: dbt test --target dev
